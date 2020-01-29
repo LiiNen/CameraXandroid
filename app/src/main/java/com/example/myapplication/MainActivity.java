@@ -26,27 +26,48 @@ public class MainActivity extends Activity{
 
         cameraDPM = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
         componame = new ComponentName(this, CameraDisableReceiver.class);
-
         // camera admin add
-        Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
-        intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, componame);
-        intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, "카메라 차단");
-        startActivityForResult(intent, 0);
+
 
         findViewById(R.id.cameraBtn).setOnClickListener(myClickListener);
-        toastMessage();
     }
 
     Button.OnClickListener myClickListener = new View.OnClickListener() {
         public void onClick(View v) {
             // do camera on / off
             System.out.println("버튼 클릭클릭");
-            toastMessage();
+
+            if(!cameraDPM.isAdminActive(componame)){
+                System.out.println("권한이 없습니다.");
+                Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
+                intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, componame);
+                intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, "카메라 차단");
+                startActivityForResult(intent, 0);
+            }
+            else{
+                System.out.println("권한이 있습니다.");
+            }
+
+            if(cameraDPM.getCameraDisabled(componame)) {
+                cameraDPM.setCameraDisabled(componame, false);
+                toastMessageEnabled();
+            }
+            else if(!cameraDPM.getCameraDisabled(componame)) {
+                cameraDPM.setCameraDisabled(componame, true);
+                toastMessageDisabled();
+            }
+            else{
+                System.out.println("왜안되징..");
+            }
+
         }
     };
 
-    public void toastMessage(){
-        Toast.makeText(this, "button pushed", Toast.LENGTH_LONG).show();
+    public void toastMessageDisabled(){
+        Toast.makeText(this, "카메라가 차단되었습니다.", Toast.LENGTH_LONG).show();
+    }
+    public void toastMessageEnabled(){
+        Toast.makeText(this, "카메라 차단이 해제되었습니다.", Toast.LENGTH_LONG).show();
     }
 }
 
@@ -55,11 +76,9 @@ class CameraDisableReceiver extends DeviceAdminReceiver {
     @Override
     public void onEnabled(Context context, Intent intent) {
         super.onEnabled(context, intent);
-        Toast.makeText(context, "카메라가 차단되었습니다.", Toast.LENGTH_LONG).show();
     }
 
     public void onDisabled(Context context, Intent intent) {
         super.onDisabled(context, intent);
-        Toast.makeText(context, "카메라 차단이 해제되었습니다.", Toast.LENGTH_LONG).show();
     }
 }
