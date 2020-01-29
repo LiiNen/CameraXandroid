@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.admin.DeviceAdminReceiver;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.CompoundButton;
 import android.app.Activity;
 import android.app.admin.DevicePolicyManager;
@@ -12,8 +13,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
+import android.widget.Button;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity{
 
     DevicePolicyManager cameraDPM;
     ComponentName componame;
@@ -30,6 +32,21 @@ public class MainActivity extends Activity {
         intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, componame);
         intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, "카메라 차단");
         startActivityForResult(intent, 0);
+
+        findViewById(R.id.cameraBtn).setOnClickListener(myClickListener);
+        toastMessage();
+    }
+
+    Button.OnClickListener myClickListener = new View.OnClickListener() {
+        public void onClick(View v) {
+            // do camera on / off
+            System.out.println("버튼 클릭클릭");
+            toastMessage();
+        }
+    };
+
+    public void toastMessage(){
+        Toast.makeText(this, "button pushed", Toast.LENGTH_LONG).show();
     }
 }
 
