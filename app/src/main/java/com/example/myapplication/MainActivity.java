@@ -14,6 +14,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
 import android.widget.Button;
+import android.view.WindowManager;
 
 public class MainActivity extends Activity{
 
@@ -22,12 +23,21 @@ public class MainActivity extends Activity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        int uiOptions = getWindow().getDecorView().getSystemUiVisibility();
+        int newUiOptions = uiOptions;
+        boolean isImmersiveModeEnabled = ((uiOptions | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY) == uiOptions);
+
+        newUiOptions ^= View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
+        newUiOptions ^= View.SYSTEM_UI_FLAG_FULLSCREEN;
+        newUiOptions ^= View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+        getWindow().getDecorView().setSystemUiVisibility(newUiOptions);
+
         setContentView(R.layout.activity_main);
 
         cameraDPM = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
         componame = new ComponentName(this, CameraDisableReceiver.class);
         // camera admin add
-
 
         findViewById(R.id.cameraBtn).setOnClickListener(myClickListener);
     }
